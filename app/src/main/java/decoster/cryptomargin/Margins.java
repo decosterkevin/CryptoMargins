@@ -30,6 +30,8 @@ public class Margins {
         INIT, BTC
     }
     public static double[] getValueCurrency(Currency currency, double initValue, double initDollar, double initBTC) {
+        if(currency == Currency.INIT) currency=Currency.BTC;
+
         String c2bc = Remote.getJSON(currency.name().toLowerCase() + "btc");
         String c2usd = Remote.getJSON(currency.name().toLowerCase() + "usd");
         double tmpBC = 0.0;
@@ -38,7 +40,7 @@ public class Margins {
             tmpBC = Double.parseDouble(c2bc)*initValue*1000.0;
         }
         else {
-            tmpBC =initValue;
+            tmpBC =initValue*1000.0;
         }
         if(c2usd != null) {
             tmpUS = Double.parseDouble(c2usd)*initValue;

@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private final int numberFinalRow = 2;
     private final int nbColumns =6;
     private final int initalOffset = 9;
-    public  HashMap<Margins.Currency, double[]> margs;
+    public LinkedHashMap<Margins.Currency, double[]> margs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,14 +51,16 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton myFab = (FloatingActionButton)findViewById(R.id.fab);
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
                 updateMargins(initalOffset,margs);
+
             }
         });
     }
 
     public void initializeVariable() {
-        margs= new HashMap<>();
-        margs.put(Margins.Currency.BTC, new double[]{0.022, 15.5,0.022});
+        margs= new LinkedHashMap<>();
+        margs.put(Margins.Currency.INIT, new double[]{0.022, 15.5,0.022});
         margs.put(Margins.Currency.BTC, new double[]{0.012, 8.4, 0.0});
         margs.put(Margins.Currency.IOT, new double[]{11.77, 47.77, 2.89});
         margs.put(Margins.Currency.XRP, new double[]{150.0, 36.075, 2.1});
@@ -71,13 +74,15 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void updateMargins(final int start,final HashMap<Margins.Currency, double[]> margs) {
+    public void updateMargins(final int start,final LinkedHashMap<Margins.Currency, double[]> margs) {
+        findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
         new Thread(){
             public void run(){
-                final HashMap res = getInfo(margs);
+                final LinkedHashMap res = getInfo(margs);
                 handler.post(new Runnable(){
                         public void run(){
                             updateGrid(start, res);
+                            findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                         }
                     });
 
@@ -85,9 +90,9 @@ public class MainActivity extends AppCompatActivity {
         }.start();
     }
 
-    public HashMap getInfo(final HashMap<Margins.Currency, double[]> margs) {
+    public LinkedHashMap getInfo(final LinkedHashMap<Margins.Currency, double[]> margs) {
         Iterator it = margs.entrySet().iterator();
-        HashMap<Margins.Currency, double[]> result = new HashMap<>();
+        LinkedHashMap<Margins.Currency, double[]> result = new LinkedHashMap<>();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             Margins.Currency curr = (Margins.Currency) pair.getKey();
@@ -116,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             grid.addView(titleText, param);
         }
     }
-    private void updateGrid(int start, HashMap<Margins.Currency, double[]> currencies) {
+    private void updateGrid(int start, LinkedHashMap<Margins.Currency, double[]> currencies) {
 
         GridLayout grid = (GridLayout)findViewById(R.id.grid);
 
@@ -128,9 +133,11 @@ public class MainActivity extends AppCompatActivity {
             Map.Entry pair = (Map.Entry)it.next();
             Margins.Currency curr = (Margins.Currency)pair.getKey();
             double[] res = (double[]) pair.getValue();
+            if(curr != Margins.Currency.INIT) {
+                totalBC += res[3];
+                totalUSD += res[4];
+            }
 
-            totalBC += res[3];
-            totalUSD += res[4];
             for(int j=0; j < 6; j++) {
 
 
