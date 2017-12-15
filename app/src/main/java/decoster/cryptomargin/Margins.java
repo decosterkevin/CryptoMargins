@@ -27,7 +27,7 @@ public class Margins {
         XRP,
         NEO,
         BCH,
-        INIT, BTC
+        INIT, BTC, BTG
     }
     public static double[] getValueCurrency(Currency currency, double initValue, double initDollar, double initBTC) {
         if(currency == Currency.INIT) currency=Currency.BTC;

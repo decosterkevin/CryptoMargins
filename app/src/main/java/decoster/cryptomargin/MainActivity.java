@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         margs.put(Margins.Currency.XRP, new double[]{150.0, 36.075, 2.1});
         margs.put(Margins.Currency.NEO, new double[]{2.0, 70.0, 4.0});
         margs.put(Margins.Currency.BCH, new double[]{0.023, 35.1, 2.01});
+        margs.put(Margins.Currency.BTG, new double[]{0.0232, 7.1, 0.44});
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
