@@ -1,32 +1,37 @@
 package decoster.cryptomargin;
 
-import android.databinding.DataBindingUtil;
-import android.graphics.Paint;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.lang.reflect.Field;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.concurrent.Callable;
 
 import decoster.cryptomargin.databinding.MainActivityBinding;
 
@@ -37,16 +42,17 @@ public class MainActivity extends AppCompatActivity {
     private final int nbColumns =6;
     private final int initalOffset = 9;
     public LinkedHashMap<Margins.Currency, double[]> margs;
+    public SharedPreferences prefs;
+    public String hashMapKey = "map";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         handler = new Handler();
         setContentView(R.layout.main_activity);
+        prefs = getPreferences(Context.MODE_PRIVATE);
+
+
         initializeVariable();
-
-        initGrid((margs.size()+numberFinalRow)*nbColumns);
-
-        updateMargins(initalOffset,this.margs);
 
         FloatingActionButton myFab = (FloatingActionButton)findViewById(R.id.fab);
         myFab.setOnClickListener(new View.OnClickListener() {
@@ -56,17 +62,48 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        FloatingActionButton logout = (FloatingActionButton)findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                prefs.edit().clear().commit();
+                initializeVariable();
+
+            }
+        });
     }
 
     public void initializeVariable() {
-        margs= new LinkedHashMap<>();
-        margs.put(Margins.Currency.INIT, new double[]{0.022, 15.5,0.022});
-        margs.put(Margins.Currency.BTC, new double[]{0.012, 8.4, 0.0});
-        margs.put(Margins.Currency.IOT, new double[]{11.77, 47.77, 2.89});
-        margs.put(Margins.Currency.XRP, new double[]{150.0, 36.075, 2.1});
-        margs.put(Margins.Currency.NEO, new double[]{2.0, 70.0, 4.0});
-        margs.put(Margins.Currency.BCH, new double[]{0.023, 35.1, 2.01});
-        margs.put(Margins.Currency.BTG, new double[]{0.0232, 7.1, 0.44});
+
+
+        if(prefs.getBoolean("isLogged", false)) {
+            margs = getHashMap(hashMapKey);
+            Log.d("main", String.valueOf(margs.size()));
+            initGrid((margs.size()+numberFinalRow)*nbColumns);
+            updateMargins(initalOffset,margs);
+        }
+        else{
+            margs= new LinkedHashMap<>();
+            createDialogList();
+        }
+
+
+
+//        if(res != null) {
+//            double[] tmp = createDialogCrypto("INIT");
+//            margs.put(Margins.Currency.INIT, tmp);
+//            for(Margins.Currency crypto : res) {
+//                tmp = createDialogCrypto(crypto.name());
+//                margs.put(crypto, tmp);
+//            }
+//        }
+//        margs.put(Margins.Currency.INIT, new double[]{0.022, 15.5,0.022});
+//        margs.put(Margins.Currency.BTC, new double[]{0.00616, 8.4, 0.0});
+//        margs.put(Margins.Currency.IOT, new double[]{11.77, 47.77, 2.89});
+//        margs.put(Margins.Currency.XRP, new double[]{150.0, 36.075, 2.1});
+//        margs.put(Margins.Currency.NEO, new double[]{2.0, 70.0, 4.0});
+//        margs.put(Margins.Currency.BCH, new double[]{0.023, 35.1, 2.01});
+//        margs.put(Margins.Currency.BTG, new double[]{0.0232, 7.1, 0.44});
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -149,7 +186,16 @@ public class MainActivity extends AppCompatActivity {
                     titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
                 }
                 else {
-                    titleText.setText(String.format("%.2f",res[j-1]));
+                    if(res[j-1] < 0.01) {
+                        titleText.setText(String.format("%.4f",res[j-1]));
+                    }
+                    else if(res[j-1] <1.0) {
+                        titleText.setText(String.format("%.2f",res[j-1]));
+                    }
+                    else {
+                        titleText.setText(String.format("%.1f",res[j-1]));
+                    }
+
                 }
                 counter ++;
 
@@ -192,5 +238,136 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    public double[] createDialogCrypto(String crypto) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        // Get the layout inflater
+        final LinearLayout layout = (LinearLayout) this.getLayoutInflater().inflate(R.layout.currency_values, null);
+        TextView text= layout.findViewById(R.id.crypto);
+
+        if(crypto.equals("INIT")) {
+            text.setText("BTC");
+            builder.setTitle("Enter the inital BTC (before investment)");
+        }
+        else {
+            text.setText(crypto);
+            builder.setTitle("Enter your current wallet value");
+        }
+
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        final double[] result = new double[3];
+        builder.setView(layout)
+                // Add action buttons
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        EditText nb1=layout.findViewById(R.id.nb1);
+                        EditText nb2=layout.findViewById(R.id.nb2);
+                        EditText nb3=layout.findViewById(R.id.nb3);
+
+                        if(nb1.getText() == null || nb1.getText().toString().equals("")) {
+                            nb1.setBackgroundColor(Color.RED);
+                        }
+                        else {
+                            result[0] = Double.valueOf(nb1.getText().toString());
+                            result[1]= (nb2.getText()==null || nb2.getText().toString().equals(""))?0.0:Double.valueOf(nb2.getText().toString());
+                            result[2]= (nb3.getText()==null || nb3.getText().toString().equals(""))?0.0:Double.valueOf(nb3.getText().toString());
+                            dialog.dismiss();
+                        }
+                    }
+                });
+
+
+        builder.show();
+        return result;
+
+    }
+    public ArrayList createDialogList() {
+
+        final ArrayList<Integer> mSelectedItems = new ArrayList<Integer>();  // Where we track the selected items
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        // Set the dialog title
+        String[] currenciesStr = new String[Margins.Currency.values().length-1];
+        final Margins.Currency[] currencies= new Margins.Currency[Margins.Currency.values().length-1];
+        int i =0;
+        for(Margins.Currency curr: Margins.Currency.values()) {
+            if(curr != Margins.Currency.INIT) {
+                currenciesStr[i] = curr.name();
+                currencies[i] = curr;
+                i++;
+            }
+
+        }
+        builder.setTitle(R.string.list_view)
+                // Specify the list array, the items to be selected by default (null for none),
+                // and the listener through which to receive callbacks when items are selected
+                .setMultiChoiceItems(currenciesStr, null,
+                        new DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which,
+                                                boolean isChecked) {
+                                if (isChecked) {
+                                    // If the user checked the item, add it to the selected items
+                                    mSelectedItems.add(which);
+                                } else if (mSelectedItems.contains(which)) {
+                                    // Else, if the item is already in the array, remove it
+                                    mSelectedItems.remove(Integer.valueOf(which));
+                                }
+                            }
+                        })
+                // Set the action buttons
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        if(mSelectedItems.size() >= 1) {
+                            ArrayList<Margins.Currency> res = new ArrayList<Margins.Currency>();
+                            res.add(Margins.Currency.INIT);
+                            for(int ii= 0; ii < mSelectedItems.size(); ii++) {
+                                int index= mSelectedItems.get(ii);
+                                res.add(currencies[index]);
+                            }
+                            final CustomDialog dial = new CustomDialog(MainActivity.this, res);
+                            dial.init(new Callable() {
+                                @Override
+                                public Object call() throws Exception {
+                                    margs=dial.getResult();
+                                    prefs.edit().putBoolean("isLogged", true).commit();
+                                    saveHashMap(hashMapKey, margs);
+
+                                    initGrid((margs.size()+numberFinalRow)*nbColumns);
+                                    updateMargins(initalOffset,margs);
+
+                                    return null;
+                                }
+                            });
+                            dialog.dismiss();
+                        }
+
+                    }
+                });
+
+        builder.show();
+
+        return null;
+
+    }
+    public void saveHashMap(String key , Object obj) {
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(obj);
+        editor.putString(key,json);
+        editor.apply();     // This line is IMPORTANT !!!
+    }
+
+
+    public LinkedHashMap<Margins.Currency,double[]> getHashMap(String key) {
+        Gson gson = new Gson();
+        String json = prefs.getString(key,"");
+        java.lang.reflect.Type type = new TypeToken<LinkedHashMap<Margins.Currency,double[]>>(){}.getType();
+        LinkedHashMap<Margins.Currency,double[]> obj = gson.fromJson(json, type);
+        return obj;
     }
 }

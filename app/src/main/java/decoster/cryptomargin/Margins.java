@@ -27,11 +27,13 @@ public class Margins {
         XRP,
         NEO,
         BCH,
-        INIT, BTC, BTG
+        INIT,
+        BTC,
+        BTG
     }
     public static double[] getValueCurrency(Currency currency, double initValue, double initDollar, double initBTC) {
         if(currency == Currency.INIT) currency=Currency.BTC;
-
+        Log.d("main", String.valueOf(initValue));
         String c2bc = Remote.getJSON(currency.name().toLowerCase() + "btc");
         String c2usd = Remote.getJSON(currency.name().toLowerCase() + "usd");
         double tmpBC = 0.0;

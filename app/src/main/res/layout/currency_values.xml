@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_margin="10dp"
+    >
+    <TextView
+        android:id="@+id/crypto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:text="Crypto:"
+        android:layout_margin="5dp"/>
+    <EditText
+        android:id="@+id/nb1"
+        android:hint="Crypto nb"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_margin="5dp"
+        android:inputType="numberDecimal"
+        />
+
+    <EditText
+        android:id="@+id/nb2"
+        android:hint="value $"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_margin="5dp"
+        android:inputType="numberDecimal"
+        />
+    <EditText
+        android:id="@+id/nb3"
+        android:hint="value BTC"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_margin="5dp"
+        android:inputType="numberDecimal"
+        />
+
+
+</LinearLayout>
