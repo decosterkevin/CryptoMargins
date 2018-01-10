@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">CryptoMargin</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="list_view">Selectionner vos crypto-monnaies</string>
+    <string name="ok">ok</string>
+    <string name="cancel">annuler</string>
+    <string name="confirmation_title">Confirmation</string>
+    <string name="confirmation_msg">Etes vous sûr de vouloir supprimer cette configuration?</string>
+    <string name="yes">oui</string>
+    <string name="no">non</string>
+</resources>
