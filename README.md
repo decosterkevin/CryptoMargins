@@ -3,10 +3,14 @@ Small android app to follow my cryptocurrency trading gain regarding my initial 
 
 ## INSTALL
 
-Download the .apk and install it on your fun (you need to enable developper mode and allows installation from .apk ([How to install from apk](https://www.wikihow.tech/Install-APK-Files-on-Android))
--Optional:
+* Download the .apk inside the apk folder and install it on your fun (you need to enable developper mode and allows installation from .apk ([How to install from apk](https://www.wikihow.tech/Install-APK-Files-on-Android))
 
-Download the source file and build/install the app via ADB
+Note: debug and release apk are the unsigned and signed apk version respectivelly.
+
+* Or go to the playstore app CryptoMargins and download it
+
+* Optional:
+Download the source file and build/install the app via ADB using Android studio
 
 ## USE
 
