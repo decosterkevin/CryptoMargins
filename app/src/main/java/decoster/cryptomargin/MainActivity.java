@@ -58,9 +58,30 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton logout = (FloatingActionButton)findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setMessage(R.string.confirmation_msg);
+                builder.setCancelable(false);
 
-                prefs.edit().clear().commit();
-                initializeVariable();
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        prefs.edit().clear().commit();
+                        margs = new LinkedHashMap<>();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.show();
+
 
             }
         });
