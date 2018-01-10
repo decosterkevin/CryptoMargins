@@ -2,20 +2,6 @@ package decoster.cryptomargin;
 
 import android.util.Log;
 
-import org.knowm.xchange.Exchange;
-import org.knowm.xchange.ExchangeFactory;
-import org.knowm.xchange.bitfinex.v1.BitfinexExchange;
-import org.knowm.xchange.currency.CurrencyPair;
-import org.knowm.xchange.dto.marketdata.Ticker;
-import org.knowm.xchange.service.marketdata.MarketDataService;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
-
 /**
  * Created by kevin on 12.12.17.
  */
@@ -29,7 +15,19 @@ public class Margins {
         BCH,
         INIT,
         BTC,
-        BTG
+        BTG,
+        LTC,
+        ETH,
+        ETC,
+        XMR,
+        RRT,
+        ZEC,
+        EOS,
+        SAN,
+        OMG,
+        DAT,
+        DSH,
+        EDO
     }
     public static double[] getValueCurrency(Currency currency, double initValue, double initDollar, double initBTC) {
         if(currency == Currency.INIT) currency=Currency.BTC;
