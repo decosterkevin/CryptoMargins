@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         for(int i =0; i < nb; i++) {
             TextView titleText= new TextView(this);
             titleText.setText("-");
-
+            titleText.setTextColor(getResources().getColor(R.color.colorAccent2));
             GridLayout.Spec row=   GridLayout.spec(GridLayout.UNDEFINED, 1);
             GridLayout.Spec col  = GridLayout.spec(GridLayout.UNDEFINED, 1);
 
