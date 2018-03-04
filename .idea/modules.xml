@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CryptoMargin.iml" filepath="$PROJECT_DIR$/CryptoMargin.iml" />
+      <module fileurl="file://C:\Users\Kevin\Documents\project\CryptoMargins\CryptoMargin.iml" filepath="C:\Users\Kevin\Documents\project\CryptoMargins\CryptoMargin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CryptoMargins.iml" filepath="$PROJECT_DIR$/CryptoMargins.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\Kevin\Documents\project\CryptoMargins\app\app.iml" filepath="C:\Users\Kevin\Documents\project\CryptoMargins\app\app.iml" />
     </modules>
   </component>
 </project>
